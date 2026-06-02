@@ -1,0 +1,40 @@
+Fala pessoal! Segue a divisão sugerida para a apresentação sobre o LED Azul (O Desafio do RGB).
+Cada um de nós (Pessoa 1 a 8) ficou com uma parte. Escolham as suas:
+
+*Pessoa 1 (Abertura e Evolução)*
+• Slide 1: Capa
+• Slide 2: Nossa Equipe
+• Slide 3: Evolução (Da Chama ao Fóton)
+_O que falar: Dar as boas-vindas, apresentar o grupo e contar um pouco do histórico desde a lâmpada incandescente até o começo dos primeiros LEDs._
+
+*Pessoa 2 (A Base Científica)*
+• Slide 4: A Física do Vermelho e Verde
+_O que falar: Explicar de forma simples que o vermelho e o verde foram fáceis de fazer, mas sem o azul não dava para compor a cor branca nem fazer displays digitais._
+
+*Pessoa 3 (O Grande Obstáculo)*
+• Slide 5: O Abismo de 30 Anos
+_O que falar: Contar sobre a "Idade das Trevas" de 30 anos sem evolução no azul e como as grandes empresas desistiram daquele material (GaN) achando que era impossível._
+
+*Pessoa 4 (O Protagonista)*
+• Slide 6: Shuji Nakamura
+_O que falar: Contar a história do engenheiro da Nichia Corp. que teimou, assumiu os riscos, quebrou as regras do chefe e insistiu na ideia "impossível"._
+
+*Pessoa 5 (O Salto Tecnológico)*
+• Slide 7: Eficiência Luminosa (Lm/W)
+_O que falar: Explicar o gráfico de barras, mostrando como o LED Branco (que só existiu graças ao azul) estraçalhou as antigas lâmpadas incandescentes e fluorescentes em eficiência._
+
+*Pessoa 6 (Os Dois Caminhos)*
+• Slide 8: A Corrida - Dois Mundos Paralelos
+_O que falar: Fazer a introdução mostrando que havia duas equipes competindo no mundo: a Universidade de Nagoya (os acadêmicos) e a Nichia Corp (os corporativos)._
+
+*Pessoa 7 (A Análise)*
+• Slide 9: Ambiente Científico vs Corporativo (Tabela)
+_O que falar: Explicar a tabela, mostrando as diferenças entre a segurança e lentidão da faculdade versus a velocidade de bater cabeça e os riscos da empresa privada._
+
+*Pessoa 8 (Impacto e Conclusão)*
+• Slide 10: O Impacto Planetário
+• Slide 11: Diretrizes Comportamentais
+• Slide 12: Encerramento
+_O que falar: Falar sobre a revolução nas TVs e economia de energia no mundo, citar as 3 lições que tiramos da história e agradecer à turma/professor._
+
+Decidam aí qual número (1 a 8) cada um prefere!
