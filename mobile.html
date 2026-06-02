@@ -1,0 +1,1191 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>O Desafio do Azul: A Revolução do RGB (Mobile)</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        /* --- 1. DESIGN SYSTEM & VARIABLES --- */
+        :root {
+            --bg-color: #08080a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.07);
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            
+            /* Curated HSL Neon Colors */
+            --color-red: hsl(355, 100%, 60%);
+            --color-green: hsl(135, 100%, 50%);
+            --color-blue: hsl(220, 100%, 60%);
+            
+            --glow-red: rgba(255, 49, 49, 0.25);
+            --glow-green: rgba(57, 255, 20, 0.2);
+            --glow-blue: rgba(31, 81, 255, 0.25);
+            
+            --transition-smooth: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --transition-slide: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* --- 2. GLOBAL RESET & LAYOUT --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            position: relative;
+            overscroll-behavior: none;
+        }
+
+        /* --- 3. DYNAMIC BACKGROUND (RGB AURA GLOW) --- */
+        .bg-glow-container {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bg-glow-blob {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            filter: blur(100px);
+            opacity: 0.15;
+            transition: all 1.5s ease-in-out;
+        }
+
+        .blob-red {
+            background-color: var(--color-red);
+            top: -50px;
+            left: -50px;
+            animation: floatBlob1 20s infinite alternate;
+        }
+
+        .blob-green {
+            background-color: var(--color-green);
+            bottom: -50px;
+            right: -50px;
+            animation: floatBlob2 25s infinite alternate;
+        }
+
+        .blob-blue {
+            background-color: var(--color-blue);
+            top: 40%;
+            left: 30%;
+            width: 250px;
+            height: 250px;
+            opacity: 0.12;
+            animation: floatBlob3 18s infinite alternate;
+        }
+
+        @keyframes floatBlob1 {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(80px, 120px) scale(1.3); }
+        }
+
+        @keyframes floatBlob2 {
+            0% { transform: translate(0, 0) scale(1.2); }
+            100% { transform: translate(-100px, -80px) scale(0.9); }
+        }
+
+        @keyframes floatBlob3 {
+            0% { transform: translate(0, 0) scale(0.8); }
+            100% { transform: translate(-50px, 80px) scale(1.2); }
+        }
+
+        /* --- 4. SLIDER STRUCTURE --- */
+        #presentation-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            z-index: 2;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .slides-container {
+            flex-grow: 1;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: row;
+            touch-action: pan-y; /* Permite scroll vertical interno nas slides */
+            will-change: transform;
+        }
+
+        .slide {
+            width: 100vw;
+            height: 100%;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            padding: 70px 24px 85px 24px;
+            overflow-y: auto; /* Permite scroll se o conteúdo for maior que a tela (ex: iPhone SE) */
+            -webkit-overflow-scrolling: touch;
+            box-sizing: border-box;
+            justify-content: flex-start;
+        }
+
+        /* --- 5. PROGRESS & INDICATORS --- */
+        .progress-header {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 16px 24px;
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            pointer-events: none;
+        }
+
+        .progress-bar-bg {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 2px;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, var(--color-red), var(--color-green), var(--color-blue));
+            transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: 2px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .presentation-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-secondary);
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .slide-counter {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.04);
+            padding: 2px 8px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .navigation-dots {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            gap: 8px;
+            pointer-events: auto;
+        }
+
+        .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            transition: all var(--transition-smooth);
+        }
+
+        .dot.active {
+            width: 20px;
+            border-radius: 4px;
+            background: #fff;
+        }
+
+        /* --- 6. GENERAL TYPOGRAPHY & COMPONENTS --- */
+        .slide-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 26px;
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 20px;
+            border-left: 6px solid transparent;
+            padding-left: 12px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            flex-shrink: 0;
+        }
+
+        /* Color accents for slide titles */
+        .slide-accent-red { border-left-color: var(--color-red); }
+        .slide-accent-green { border-left-color: var(--color-green); }
+        .slide-accent-blue { border-left-color: var(--color-blue); }
+        .slide-accent-rgb {
+            border-image: linear-gradient(to bottom, var(--color-red), var(--color-green), var(--color-blue)) 1 100%;
+            border-left-width: 6px;
+            border-left-style: solid;
+        }
+
+        p.body-text {
+            font-size: 15px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+        }
+
+        .highlight-box {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 16px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        /* --- 7. SPECIALIST LAYOUTS (MOBILE ADAPTED) --- */
+        
+        /* Grid of cards stackable */
+        .mobile-stack-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            width: 100%;
+        }
+
+        .compact-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 14px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .compact-card-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 15px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .compact-card.border-red { border-top: 4px solid var(--color-red); }
+        .compact-card.border-green { border-top: 4px solid var(--color-green); }
+        .compact-card.border-blue { border-top: 4px solid var(--color-blue); }
+
+        .compact-card p {
+            font-size: 13px;
+            line-height: 1.4;
+            color: var(--text-secondary);
+        }
+
+        /* Embedded Image Styles */
+        .mobile-image-container {
+            width: 100%;
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+            margin: 8px 0 16px 0;
+            flex-shrink: 0;
+            position: relative;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .mobile-image-container img {
+            width: 100%;
+            height: auto;
+            max-height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* Lists */
+        ul.mobile-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        ul.mobile-list li {
+            position: relative;
+            padding-left: 28px;
+            font-size: 14px;
+            line-height: 1.45;
+            color: var(--text-secondary);
+        }
+
+        ul.mobile-list li i {
+            position: absolute;
+            left: 0;
+            top: 3px;
+            font-size: 16px;
+        }
+
+        /* Text colors */
+        .text-red { color: var(--color-red); text-shadow: 0 0 10px var(--glow-red); }
+        .text-green { color: var(--color-green); text-shadow: 0 0 10px var(--glow-green); }
+        .text-blue { color: var(--color-blue); text-shadow: 0 0 10px var(--glow-blue); }
+
+        /* --- 8. SLIDE SPECIFIC CUSTOM STYLES --- */
+
+        /* Slide 1 Capa */
+        #slide1-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
+
+        .large-rgb-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 80px;
+            font-weight: 800;
+            line-height: 0.9;
+            margin-bottom: 10px;
+            letter-spacing: -2px;
+        }
+
+        .large-rgb-title span {
+            display: inline-block;
+        }
+
+        .span-r { color: var(--color-red); animation: pulseNeonRed 3s infinite ease-in-out; }
+        .span-g { color: var(--color-green); animation: pulseNeonGreen 3s infinite ease-in-out 0.8s; }
+        .span-b { color: var(--color-blue); animation: pulseNeonBlue 3s infinite ease-in-out 1.6s; }
+
+        @keyframes pulseNeonRed {
+            0%, 100% { text-shadow: 0 0 10px var(--glow-red); transform: scale(1); }
+            50% { text-shadow: 0 0 25px var(--color-red), 0 0 40px var(--color-red); transform: scale(1.05); }
+        }
+        @keyframes pulseNeonGreen {
+            0%, 100% { text-shadow: 0 0 10px var(--glow-green); transform: scale(1); }
+            50% { text-shadow: 0 0 25px var(--color-green), 0 0 40px var(--color-green); transform: scale(1.05); }
+        }
+        @keyframes pulseNeonBlue {
+            0%, 100% { text-shadow: 0 0 10px var(--glow-blue); transform: scale(1); }
+            50% { text-shadow: 0 0 25px var(--color-blue), 0 0 40px var(--color-blue); transform: scale(1.05); }
+        }
+
+        .presentation-subtitle-large {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: #fff;
+            margin-top: 10px;
+            line-height: 1.2;
+            text-transform: uppercase;
+        }
+
+        .presentation-desc-short {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 15px;
+            max-width: 280px;
+        }
+
+        /* Swipe Hint */
+        .swipe-hint {
+            margin-top: 40px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+            color: var(--text-muted);
+            font-size: 12px;
+            font-weight: 500;
+            animation: bounceSwipe 2s infinite ease-in-out;
+        }
+
+        .swipe-hint i {
+            font-size: 20px;
+            color: var(--text-secondary);
+        }
+
+        @keyframes bounceSwipe {
+            0%, 100% { transform: translateY(0); opacity: 0.6; }
+            50% { transform: translateY(-8px); opacity: 1; }
+        }
+
+        /* Slide 6 Abismo Bulb Centered */
+        .giant-icon-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+            flex-shrink: 0;
+        }
+
+        .giant-icon-glow {
+            font-size: 90px;
+            color: var(--color-blue);
+            animation: giantPulse 2s infinite ease-in-out;
+        }
+
+        @keyframes giantPulse {
+            0%, 100% { text-shadow: 0 0 15px var(--glow-blue); transform: scale(1); }
+            50% { text-shadow: 0 0 35px var(--color-blue), 0 0 60px var(--color-blue); transform: scale(1.08); }
+        }
+
+        /* Slide 8 Gráfico de Barras */
+        .mobile-bar-chart {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            width: 100%;
+            margin-top: 8px;
+        }
+
+        .mobile-bar-row {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .mobile-bar-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .mobile-bar-track {
+            height: 36px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 18px;
+            border: 1px solid rgba(255,255,255,0.06);
+            overflow: hidden;
+            position: relative;
+        }
+
+        .mobile-bar-fill {
+            height: 100%;
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            padding: 0 14px;
+            font-size: 12px;
+            font-weight: 800;
+            color: #fff;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.6);
+            transition: width 1s ease-out;
+            width: 0; /* JS animates this on slide view */
+        }
+
+        /* Slide 9 Tabela Adaptada */
+        .comparison-cards {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .comparison-row {
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.01);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .comparison-header-row {
+            background: rgba(255,255,255,0.03);
+            padding: 10px 14px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            border-bottom: 1px solid var(--card-border);
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .comparison-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 60px;
+        }
+
+        .comparison-cell {
+            padding: 12px;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .comparison-cell:first-child {
+            border-right: 1px solid var(--card-border);
+            background: rgba(57, 255, 20, 0.01);
+        }
+
+        .comparison-cell:last-child {
+            background: rgba(31, 81, 255, 0.01);
+        }
+
+        .comparison-cell-title {
+            font-weight: 700;
+            font-size: 10px;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
+        .comparison-cell-title.title-academica {
+            color: var(--color-green);
+        }
+
+        .comparison-cell-title.title-privada {
+            color: var(--color-blue);
+        }
+
+        /* Slide 10 Impacto Planetário Neon Card */
+        .impact-card {
+            background: linear-gradient(135deg, rgba(20,20,25,0.9), rgba(5,5,8,0.95));
+            border: 1px solid rgba(255,255,255,0.08);
+            border-radius: 20px;
+            padding: 24px;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin: auto 0;
+            overflow: hidden;
+        }
+
+        .impact-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--color-red), var(--color-green), var(--color-blue));
+        }
+
+        .impact-card h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 12px;
+            color: #fff;
+            letter-spacing: 0.5px;
+        }
+
+        .impact-card p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: var(--text-secondary);
+        }
+
+        /* Slide 12 Encerramento */
+        .end-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+        }
+
+        .end-title {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 40px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            animation: textCycleRGBMobile 4s infinite linear;
+        }
+
+        @keyframes textCycleRGBMobile {
+            0% { color: var(--color-red); text-shadow: 0 0 15px var(--glow-red); }
+            33% { color: var(--color-green); text-shadow: 0 0 15px var(--glow-green); }
+            66% { color: var(--color-blue); text-shadow: 0 0 15px var(--glow-blue); }
+            100% { color: var(--color-red); text-shadow: 0 0 15px var(--glow-red); }
+        }
+
+        .end-gif-wrapper {
+            margin-top: 30px;
+            border-radius: 16px;
+            overflow: hidden;
+            max-width: 200px;
+            border: 1px solid rgba(255,255,255,0.1);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+        }
+
+        .end-gif-wrapper img {
+            width: 100%;
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Background glowing auras -->
+    <div class="bg-glow-container">
+        <div class="bg-glow-blob blob-red"></div>
+        <div class="bg-glow-blob blob-green"></div>
+        <div class="bg-glow-blob blob-blue"></div>
+    </div>
+
+    <div id="presentation-wrapper">
+        
+        <!-- Header Progress and Slide info -->
+        <div class="progress-header">
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill" id="progress-bar"></div>
+            </div>
+            <div class="progress-info">
+                <div class="presentation-title">O Desafio do RGB</div>
+                <div class="slide-counter" id="slide-number">1 / 12</div>
+            </div>
+        </div>
+
+        <!-- Slides Wrapper -->
+        <div class="slides-container" id="slides-track">
+
+            <!-- SLIDE 1: CAPA -->
+            <div class="slide" id="slide1">
+                <div id="slide1-content">
+                    <div class="large-rgb-title">
+                        <span class="span-r">R</span><span class="span-g">G</span><span class="span-b">B</span>
+                    </div>
+                    <div class="presentation-subtitle-large">O Desafio do Azul</div>
+                    <p class="presentation-desc-short">A Revolução Tecnológica e Comportamental da Luz</p>
+                    
+                    <div class="swipe-hint" id="swipe-hint-el">
+                        <i class="fa-solid fa-hand-pointer"></i>
+                        <span>Deslize para navegar</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: INTEGRANTES -->
+            <div class="slide" id="slide2">
+                <h2 class="slide-title slide-accent-rgb">Integrantes do Grupo</h2>
+                <p class="body-text" style="font-size: 14px; margin-bottom: 12px;">Equipe dividida pelas cores do espectro RGB:</p>
+                
+                <div class="mobile-stack-cards">
+                    <div class="compact-card border-red">
+                        <div class="compact-card-title text-red">
+                            <i class="fa-solid fa-user-gear"></i> Vermelho (Red)
+                        </div>
+                        <p>Aluizio Monteiro Schuster Jr.</p>
+                        <p>Eduarda Horning Bzunek</p>
+                        <p>Júlio César Ferreira</p>
+                    </div>
+                    
+                    <div class="compact-card border-green">
+                        <div class="compact-card-title text-green">
+                            <i class="fa-solid fa-user-gear"></i> Verde (Green)
+                        </div>
+                        <p>José Otavio C. Raimundo</p>
+                        <p>João Gualberto Boissa Netto</p>
+                        <p>João Matheus Pianaro</p>
+                    </div>
+                    
+                    <div class="compact-card border-blue">
+                        <div class="compact-card-title text-blue">
+                            <i class="fa-solid fa-user-gear"></i> Azul (Blue)
+                        </div>
+                        <p>João Vitor da Mota Mattos</p>
+                        <p>Yasmin Dos Santos Pereira</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 3: EVOLUÇÃO -->
+            <div class="slide" id="slide3">
+                <h2 class="slide-title slide-accent-red">Evolução: Da Chama ao Fóton</h2>
+                <p class="body-text">A história da iluminação e o caminho até a física quântica dos materiais semicondutores.</p>
+                
+                <ul class="mobile-list">
+                    <li>
+                        <i class="fa-solid fa-fire text-red"></i>
+                        <strong>1800 - 1879:</strong> A corrida global pelo controle elétrico e a busca pelo filamento durável.
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-bolt text-green"></i>
+                        <strong>1962:</strong> Invenção do primeiro LED visível comercial (espectro Vermelho).
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-circle-question text-blue"></i>
+                        <strong>Anos 1990:</strong> O grande impasse e gargalo na engenharia de novos materiais.
+                    </li>
+                </ul>
+
+                <div class="mobile-image-container">
+                    <img src="./bulb.png" alt="Evolução da Lâmpada ao LED">
+                </div>
+            </div>
+
+            <!-- SLIDE 4: A FÍSICA DO VERMELHO E VERDE -->
+            <div class="slide" id="slide4">
+                <h2 class="slide-title slide-accent-green">A Física do Vermelho e Verde</h2>
+                
+                <div class="highlight-box">
+                    <p class="body-text" style="margin-bottom: 0; font-size: 14px;">
+                        LEDs dependem da diferença de energia que elétrons precisam saltar em materiais semicondutores, chamado de <strong class="text-green">Bandgap</strong>.
+                    </p>
+                </div>
+
+                <p class="body-text">
+                    Materiais baseados em Fósforo e Arsênico foram bem-sucedidos em produzir ondas mais longas (LEDs vermelhos e verdes).
+                </p>
+
+                <div class="highlight-box" style="border-left: 4px solid var(--color-red); background: rgba(255,49,49,0.02);">
+                    <p class="body-text" style="margin-bottom: 0; font-weight: 600; color: #fff; font-size: 14px;">
+                        Sem o LED Azul, a síntese da luz branca e o desenvolvimento de displays modernos eram fisicamente impossíveis.
+                    </p>
+                </div>
+
+                <div class="mobile-image-container">
+                    <img src="./GaN_Wurtzite_polyhedra.png" alt="Estrutura de Semicondutores GaN">
+                </div>
+            </div>
+
+            <!-- SLIDE 5: O ABISMO DE 30 ANOS -->
+            <div class="slide" id="slide5">
+                <h2 class="slide-title slide-accent-blue">O Abismo de 30 Anos</h2>
+                
+                <div class="giant-icon-container">
+                    <i class="fa-solid fa-lightbulb giant-icon-glow"></i>
+                </div>
+
+                <div class="highlight-box" style="text-align: center; border-color: rgba(31, 81, 255, 0.2);">
+                    <h3 style="font-family: 'Montserrat', sans-serif; font-size: 18px; margin-bottom: 8px; color: #fff;">Décadas de Fracassos</h3>
+                    <p class="body-text" style="margin-bottom: 0; font-size: 13.5px;">
+                        Três décadas se passaram sem evolução no espectro azul. As gigantes da tecnologia desistiram do <strong>Nitreto de Gálio (GaN)</strong> por considerá-lo impossível de cultivar comercialmente sem defeitos críticos.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SLIDE 6: SHUJI NAKAMURA -->
+            <div class="slide" id="slide6">
+                <h2 class="slide-title slide-accent-blue">Shuji Nakamura</h2>
+                
+                <div class="mobile-image-container" style="max-height: 160px;">
+                    <img src="./nakamura-15186-portrait-medium.png" alt="Shuji Nakamura Portrait" style="max-height: 160px; object-position: center 20%;">
+                </div>
+
+                <div class="compact-card" style="border-left: 4px solid var(--color-blue); margin-bottom: 12px;">
+                    <div class="compact-card-title text-blue" style="font-size: 14px;">
+                        Intraempreendedorismo Radical
+                    </div>
+                    <p style="font-size: 12.5px;">
+                        Enquanto a comunidade científica mundial apostava no Seleneto de Zinco (ZnSe), Nakamura insistiu solitariamente no problemático Nitreto de Gálio (GaN).
+                    </p>
+                </div>
+
+                <div class="compact-card" style="border-left: 4px solid var(--color-green);">
+                    <div class="compact-card-title text-green" style="font-size: 14px;">
+                        Ruptura e Execução
+                    </div>
+                    <p style="font-size: 12.5px;">
+                        Nakamura ignorou ordens corporativas de seus superiores para encerrar a pesquisa, modificando as máquinas de cultivo de GaN com suas próprias mãos para alcançar o sucesso prático.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SLIDE 7: EFICIÊNCIA LUMINOSA -->
+            <div class="slide" id="slide7">
+                <h2 class="slide-title slide-accent-rgb">Eficiência Luminosa (Lm/W)</h2>
+                
+                <p class="body-text" style="font-size: 13px; margin-bottom: 15px;">
+                    <strong class="text-blue">Lm/W (Lúmens por Watt):</strong> Mede quanta luz visível é gerada para cada Watt de eletricidade consumido.
+                </p>
+
+                <div class="mobile-bar-chart">
+                    <div class="mobile-bar-row">
+                        <div class="mobile-bar-label">Incandescente</div>
+                        <div class="mobile-bar-track">
+                            <div class="mobile-bar-fill" data-width="15" style="background-color: #4a5568;">15 Lm/W</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mobile-bar-row">
+                        <div class="mobile-bar-label">Fluorescente</div>
+                        <div class="mobile-bar-track">
+                            <div class="mobile-bar-fill" data-width="45" style="background-color: #718096;">70 Lm/W</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mobile-bar-row">
+                        <div class="mobile-bar-label">LED Branco (RGB)</div>
+                        <div class="mobile-bar-track">
+                            <div class="mobile-bar-fill" data-width="95" style="background: linear-gradient(90deg, var(--color-red), var(--color-green), var(--color-blue));">300+ Lm/W</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 8: A CORRIDA PARALELA -->
+            <div class="slide" id="slide8">
+                <h2 class="slide-title slide-accent-blue">Dois Mundos Paralelos</h2>
+                <p class="body-text" style="font-size: 13.5px; margin-bottom: 12px;">Duas rotas opostas competindo na corrida tecnológica pelo LED azul:</p>
+                
+                <div class="mobile-stack-cards">
+                    <div class="compact-card" style="border-left: 4px solid var(--color-green);">
+                        <div class="compact-card-title text-green" style="font-size: 14px;">
+                            <i class="fa-solid fa-graduation-cap"></i> A Academia (Nagoya)
+                        </div>
+                        <p style="font-size: 12px;">
+                            <strong>Akasaki e Amano:</strong> Foco no rigor teórico e elucidação física da dopagem e do crescimento cristalino. Pouca verba, muita precisão científica.
+                        </p>
+                    </div>
+                    
+                    <div class="compact-card" style="border-left: 4px solid var(--color-red);">
+                        <div class="compact-card-title text-red" style="font-size: 14px;">
+                            <i class="fa-solid fa-building"></i> O Corporativo (Nichia)
+                        </div>
+                        <p style="font-size: 12px;">
+                            <strong>Nakamura:</strong> Foco em produto e escala comercial. Alta velocidade, experimentação empírica ("tentativa e erro") e assunção extrema de riscos.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="highlight-box" style="margin-top: 14px; padding: 12px; text-align: center; border-color: rgba(255,255,255,0.05);">
+                    <p style="font-size: 12px; font-weight: 600; color: #fff;">
+                        Embora rivais nos métodos, os três pesquisadores dividiram o <span class="text-blue">Prêmio Nobel de Física</span>.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SLIDE 9: AMBIENTE CIENTÍFICO VS CORPORATIVO -->
+            <div class="slide" id="slide9">
+                <h2 class="slide-title slide-accent-blue">Científico vs Corporativo</h2>
+                <p class="body-text" style="font-size: 13.5px; margin-bottom: 12px;">Comparação da abordagem entre as equipes acadêmica e privada:</p>
+
+                <div class="comparison-cards">
+                    <div class="comparison-row">
+                        <div class="comparison-header-row">Metodologia</div>
+                        <div class="comparison-body">
+                            <div class="comparison-cell">
+                                <div class="comparison-cell-title title-academica">Nagoya</div>
+                                Teórica, Incremental e Rígida.
+                            </div>
+                            <div class="comparison-cell">
+                                <div class="comparison-cell-title title-privada">Nichia Corp.</div>
+                                Prática, Empírica e Veloz.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-row">
+                        <div class="comparison-header-row">Gestão de Risco</div>
+                        <div class="comparison-body">
+                            <div class="comparison-cell">
+                                <div class="comparison-cell-title title-academica">Nagoya</div>
+                                Controlada com foco em publicações.
+                            </div>
+                            <div class="comparison-cell">
+                                <div class="comparison-cell-title title-privada">Nichia Corp.</div>
+                                Extrema com foco em patentes e mercado.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="comparison-row">
+                        <div class="comparison-header-row">Resultado Principal</div>
+                        <div class="comparison-body">
+                            <div class="comparison-cell">
+                                <div class="comparison-cell-title title-academica">Nagoya</div>
+                                Rigor e base de engenharia de materiais.
+                            </div>
+                            <div class="comparison-cell">
+                                <div class="comparison-cell-title title-privada">Nichia Corp.</div>
+                                Ruptura comercial rápida e produto global.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 10: O IMPACTO GLOBAL -->
+            <div class="slide" id="slide10">
+                <h2 class="slide-title slide-accent-rgb">O Impacto Planetário</h2>
+                
+                <div class="impact-card">
+                    <h3>Revolução Silenciosa</h3>
+                    <p>
+                        A consolidação comercial do sistema RGB viabilizou displays digitais de altíssima definição (telas OLED e LCD de smartphones e TVs), reduziu dramaticamente o consumo de energia no planeta e pavimentou a infraestrutura visual que usamos hoje.
+                    </p>
+                </div>
+            </div>
+
+            <!-- SLIDE 11: LIÇÕES COMPORTAMENTAIS -->
+            <div class="slide" id="slide11">
+                <h2 class="slide-title slide-accent-rgb">Diretrizes Comportamentais</h2>
+                <p class="body-text" style="margin-bottom: 20px;">Três grandes aprendizados extraídos da história do LED Azul:</p>
+                
+                <ul class="mobile-list" style="gap: 16px;">
+                    <li>
+                        <i class="fa-solid fa-circle-check text-red"></i>
+                        <div>
+                            <strong>Resiliência Pragmática:</strong>
+                            <p style="font-size: 12.5px; color: var(--text-secondary); margin-top: 2px;">Sustentar posições e teses técnicas sólidas mesmo diante do ceticismo e restrições da governança corporativa.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-circle-check text-green"></i>
+                        <div>
+                            <strong>Iniciativa de Dono:</strong>
+                            <p style="font-size: 12.5px; color: var(--text-secondary); margin-top: 2px;">Modificar, construir e reparar suas próprias ferramentas operacionais quando o ecossistema existente se mostra deficiente.</p>
+                        </div>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-circle-check text-blue"></i>
+                        <div>
+                            <strong>Foco no Impacto Prático:</strong>
+                            <p style="font-size: 12.5px; color: var(--text-secondary); margin-top: 2px;">Direcionar a profundidade teórica e a expertise acadêmica para gerar soluções tangíveis com real impacto social.</p>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- SLIDE 12: ENCERRAMENTO -->
+            <div class="slide" id="slide12">
+                <div class="end-container">
+                    <h1 class="end-title">PERGUNTAS?</h1>
+                    <p class="body-text" style="color: #fff; font-weight: 500; font-size: 16px; margin-bottom: 0;">
+                        Obrigado pela atenção!
+                    </p>
+                    
+                    <div class="end-gif-wrapper">
+                        <img src="./RGB_colors.gif" alt="Cores RGB Animadas">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Navigation Dots -->
+        <div class="navigation-dots" id="dots-container"></div>
+
+    </div>
+
+    <!-- --- JavaScript for Gesture-based Navigation --- -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const track = document.getElementById('slides-track');
+            const slides = document.querySelectorAll('.slide');
+            const progressBar = document.getElementById('progress-bar');
+            const slideNumber = document.getElementById('slide-number');
+            const dotsContainer = document.getElementById('dots-container');
+            const swipeHint = document.getElementById('swipe-hint-el');
+            
+            let currentSlide = 0;
+            const totalSlides = slides.length;
+            
+            // Generate bottom navigation dots
+            for (let i = 0; i < totalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.classList.add('dot');
+                if (i === 0) dot.classList.add('active');
+                dotsContainer.appendChild(dot);
+            }
+            const dots = document.querySelectorAll('.dot');
+
+            // Set slide initial states & disable transitions on layout change
+            function updateSlider(animate = true) {
+                if (animate) {
+                    track.style.transition = 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)';
+                } else {
+                    track.style.transition = 'none';
+                }
+                
+                const percentage = -(currentSlide * 100);
+                track.style.transform = `translateX(${percentage}vw)`;
+                
+                // Update Progress and Indicators
+                const progressWidth = ((currentSlide + 1) / totalSlides) * 100;
+                progressBar.style.width = `${progressWidth}%`;
+                slideNumber.innerText = `${currentSlide + 1} / ${totalSlides}`;
+                
+                // Update Dots
+                dots.forEach((dot, idx) => {
+                    if (idx === currentSlide) {
+                        dot.classList.add('active');
+                    } else {
+                        dot.classList.remove('active');
+                    }
+                });
+
+                // Handle bar chart animations if we land on slide 7 (index 6)
+                if (currentSlide === 6) {
+                    animateBarChart();
+                } else {
+                    resetBarChart();
+                }
+            }
+
+            // Animate bar chart on landing
+            function animateBarChart() {
+                const fills = document.querySelectorAll('.mobile-bar-fill');
+                fills.forEach(fill => {
+                    const targetWidth = fill.getAttribute('data-width');
+                    setTimeout(() => {
+                        fill.style.width = `${targetWidth}%`;
+                    }, 100);
+                });
+            }
+
+            function resetBarChart() {
+                const fills = document.querySelectorAll('.mobile-bar-fill');
+                fills.forEach(fill => {
+                    fill.style.width = '0%';
+                });
+            }
+
+            // --- GESTURE / TOUCH EVENT HANDLING ---
+            let startX = 0;
+            let startY = 0;
+            let currentTranslateX = 0;
+            let isDragging = false;
+            let gestureType = null; // 'horizontal' or 'vertical' or null
+
+            track.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+                startY = e.touches[0].clientY;
+                currentTranslateX = -(currentSlide * window.innerWidth);
+                isDragging = true;
+                gestureType = null;
+                
+                // Temporarily disable transition during dragging
+                track.style.transition = 'none';
+            }, { passive: true });
+
+            track.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+
+                const moveX = e.touches[0].clientX;
+                const moveY = e.touches[0].clientY;
+                const diffX = moveX - startX;
+                const diffY = moveY - startY;
+
+                // Determine gesture type (horizontal vs vertical scroll)
+                if (gestureType === null) {
+                    if (Math.abs(diffX) > Math.abs(diffY)) {
+                        gestureType = 'horizontal';
+                    } else if (Math.abs(diffY) > Math.abs(diffX)) {
+                        gestureType = 'vertical';
+                    }
+                }
+
+                if (gestureType === 'horizontal') {
+                    // Prevent page bouncing or window actions
+                    if (e.cancelable) e.preventDefault();
+                    
+                    // Apply resistance at boundaries (elastic effect)
+                    let translation = currentTranslateX + diffX;
+                    const maxTranslate = 0;
+                    const minTranslate = -((totalSlides - 1) * window.innerWidth);
+
+                    if (translation > maxTranslate) {
+                        // Elastic formula
+                        translation = maxTranslate + (diffX * 0.3);
+                    } else if (translation < minTranslate) {
+                        const overflow = translation - minTranslate;
+                        translation = minTranslate + (overflow * 0.3);
+                    }
+
+                    track.style.transform = `translateX(${translation}px)`;
+                }
+                // If it is a vertical swipe, we let the normal vertical scroll happen inside the slide
+            }, { passive: false });
+
+            track.addEventListener('touchend', (e) => {
+                if (!isDragging) return;
+                isDragging = false;
+
+                const endX = e.changedTouches[0].clientX;
+                const diffX = endX - startX;
+                const threshold = window.innerWidth * 0.2; // 20% of screen width required to trigger slide change
+
+                if (gestureType === 'horizontal') {
+                    // Hide swipe hint on first interaction
+                    if (swipeHint) {
+                        swipeHint.style.transition = 'opacity 0.5s ease';
+                        swipeHint.style.opacity = '0';
+                        setTimeout(() => swipeHint.style.display = 'none', 500);
+                    }
+
+                    if (diffX < -threshold && currentSlide < totalSlides - 1) {
+                        // Swipe left -> Next slide
+                        currentSlide++;
+                    } else if (diffX > threshold && currentSlide > 0) {
+                        // Swipe right -> Previous slide
+                        currentSlide--;
+                    }
+                }
+                
+                updateSlider(true);
+            });
+
+            // Handle touch cancel
+            track.addEventListener('touchcancel', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    updateSlider(true);
+                }
+            });
+
+            // --- DESKTOP TESTING FALLBACK (KEYBOARD & RESIZE) ---
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                    if (currentSlide < totalSlides - 1) {
+                        currentSlide++;
+                        updateSlider(true);
+                    }
+                } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+                    if (currentSlide > 0) {
+                        currentSlide--;
+                        updateSlider(true);
+                    }
+                }
+            });
+
+            window.addEventListener('resize', () => {
+                // Adjust layout on orientation change or window resize
+                updateSlider(false);
+            });
+
+            // Initialize progress and view
+            updateSlider(false);
+        });
+    </script>
+</body>
+
+</html>
