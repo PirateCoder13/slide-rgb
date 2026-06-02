@@ -1,4 +1,4 @@
-Fala pessoal! Segue a divisão sugerida para a apresentação sobre o LED Azul (O Desafio do RGB).
+Segue a divisão sugerida para a apresentação sobre o LED Azul (O Desafio do RGB).
 Cada um de nós (Pessoa 1 a 8) ficou com uma parte. Escolham as suas:
 
 *Pessoa 1 (Abertura e Evolução)*
@@ -36,5 +36,3 @@ _O que falar: Explicar a tabela, mostrando as diferenças entre a segurança e l
 • Slide 11: Diretrizes Comportamentais
 • Slide 12: Encerramento
 _O que falar: Falar sobre a revolução nas TVs e economia de energia no mundo, citar as 3 lições que tiramos da história e agradecer à turma/professor._
-
-Decidam aí qual número (1 a 8) cada um prefere!

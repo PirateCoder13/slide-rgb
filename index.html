@@ -315,6 +315,47 @@
             background-size: 400% 400%;
             animation: glowingRGB 12s ease infinite;
         }
+
+        /* Efeitos Animados Capa RGB */
+        .title-r {
+            display: inline-block;
+            color: #FF3131;
+            animation: pulseRed 3s infinite ease-in-out;
+        }
+        .title-g {
+            display: inline-block;
+            color: #39FF14;
+            animation: pulseGreen 3s infinite ease-in-out 1s;
+        }
+        .title-b {
+            display: inline-block;
+            color: #1F51FF;
+            animation: pulseBlue 3s infinite ease-in-out 2s;
+        }
+
+        @keyframes pulseRed {
+            0%, 100% { text-shadow: 0 0 20px rgba(255,49,49,0.3); transform: translateY(0); }
+            50% { text-shadow: 0 0 50px rgba(255,49,49,1), 0 0 90px rgba(255,49,49,0.7); transform: translateY(-15px) scale(1.05); }
+        }
+        @keyframes pulseGreen {
+            0%, 100% { text-shadow: 0 0 20px rgba(57,255,20,0.3); transform: translateY(0); }
+            50% { text-shadow: 0 0 50px rgba(57,255,20,1), 0 0 90px rgba(57,255,20,0.7); transform: translateY(-15px) scale(1.05); }
+        }
+        @keyframes pulseBlue {
+            0%, 100% { text-shadow: 0 0 20px rgba(31,81,255,0.3); transform: translateY(0); }
+            50% { text-shadow: 0 0 50px rgba(31,81,255,1), 0 0 90px rgba(31,81,255,0.7); transform: translateY(-15px) scale(1.05); }
+        }
+
+        @keyframes textCycleRGB {
+            0% { color: #FF3131; text-shadow: 0 0 30px rgba(255, 49, 49, 0.5); }
+            33% { color: #39FF14; text-shadow: 0 0 30px rgba(57, 255, 20, 0.5); }
+            66% { color: #1F51FF; text-shadow: 0 0 30px rgba(31, 81, 255, 0.5); }
+            100% { color: #FF3131; text-shadow: 0 0 30px rgba(255, 49, 49, 0.5); }
+        }
+
+        .text-cycle-rgb {
+            animation: textCycleRGB 4s infinite linear;
+        }
     </style>
 </head>
 
@@ -325,7 +366,7 @@
     <!-- SLIDE 1: CAPA -->
     <div class="slide-container" id="slide1">
         <div style="text-align: center;">
-            <h1><span class="text-red">R</span><span class="text-green">G</span><span class="text-blue">B</span></h1>
+            <h1><span class="title-r">R</span><span class="title-g">G</span><span class="title-b">B</span></h1>
             <h2
                 style="color: #fff; font-size: 65px; margin-top: 15px; font-family: 'Montserrat', sans-serif; font-weight: 700;">
                 O DESAFIO DO AZUL</h2>
@@ -550,12 +591,10 @@
     <!-- SLIDE 12: ENCERRAMENTO -->
     <div class="slide-container" id="slide12">
         <div style="text-align: center;">
-            <h1 class="text-blue">PERGUNTAS?</h1>
+            <h1 class="text-cycle-rgb" style="font-size: 110px;">PERGUNTAS ?</h1>
             <p class="subtitle">Obrigado pela atenção!</p>
-            <div style="margin-top: 60px; display: flex; justify-content: center; gap: 50px; font-size: 70px;">
-                <i class="fa-solid fa-lightbulb text-red"></i>
-                <i class="fa-solid fa-microchip text-green"></i>
-                <i class="fa-solid fa-display text-blue"></i>
+            <div style="margin-top: 60px; display: flex; justify-content: center;">
+                <img src="./RGB_colors.gif" alt="Cores RGB Animadas" style="max-height: 250px; border-radius: 20px;">
             </div>
         </div>
     </div>
