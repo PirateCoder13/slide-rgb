@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>O Desafio do Azul: A Revolução do RGB</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Inter:wght@400;600&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* 1. CONFIGURAÇÃO BASE - Otimizado para Projetor 1366x768 */
@@ -16,15 +18,21 @@
 
         body {
             background-color: #111;
-            display: grid;
-            gap: 30px;
-            grid-template-columns: 1fr;
+            display: flex;
+            justify-content: center;
+            align-items: center;
             margin: 0;
-            padding: 40px 0;
-            place-items: center;
+            padding: 0;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        h1, h2, h3, h4, h5, h6 {
+            color: #fff;
         }
 
         .slide-container {
+            display: none; /* Hide by default, JS toggles it */
             align-items: center;
             background-color: #000;
             border: 2px solid #222;
@@ -37,22 +45,24 @@
             padding: 60px;
             position: relative;
             width: 1280px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8);
         }
 
         /* 1.1 DESIGN DE FUNDO VIBRANTE (RGB GLOW) */
         .slide-container::before {
             content: '';
             position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
             background: radial-gradient(circle at 25% 25%, rgba(255, 49, 49, 0.06) 0%, transparent 45%),
-                        radial-gradient(circle at 75% 75%, rgba(31, 81, 255, 0.06) 0%, transparent 45%),
-                        radial-gradient(circle at 50% 50%, rgba(57, 255, 20, 0.04) 0%, transparent 50%);
+                radial-gradient(circle at 75% 75%, rgba(31, 81, 255, 0.06) 0%, transparent 45%),
+                radial-gradient(circle at 50% 50%, rgba(57, 255, 20, 0.04) 0%, transparent 50%);
             z-index: 0;
         }
 
-        .slide-container > * {
+        .slide-container>* {
             position: relative;
             z-index: 1;
         }
@@ -80,10 +90,15 @@
             padding-left: 25px;
         }
 
-        /* Bordas de título RGB alternadas por slide para dinamismo */
-        #slide1 .slide-title, #slide4 .slide-title, #slide7 .slide-title, #slide10 .slide-title { border-color: #FF3131; } /* Vermelho */
-        #slide2 .slide-title, #slide5 .slide-title, #slide8 .slide-title, #slide11 .slide-title { border-color: #39FF14; } /* Verde */
-        #slide3 .slide-title, #slide6 .slide-title, #slide9 .slide-title, #slide12 .slide-title { border-color: #1F51FF; } /* Azul */
+        /* Bordas de título RGB baseadas no assunto do slide */
+        #slide4 .slide-title { border-color: #FF3131; } /* Evolução (Vermelho inicial) */
+        #slide5 .slide-title { border-color: #39FF14; } /* Física (Vermelho e Verde) */
+        #slide6 .slide-title, #slide7 .slide-title, #slide8-half .slide-title, #slide9 .slide-title { border-color: #1F51FF; } /* O Abismo e Nakamura (Azul) */
+        
+        #slide1 .slide-title, #slide2 .slide-title, #slide3 .slide-title, 
+        #slide8 .slide-title, #slide10 .slide-title, #slide11 .slide-title, #slide12 .slide-title {
+            border-image: linear-gradient(to bottom, #FF3131, #39FF14, #1F51FF) 1;
+        }
 
         h3 {
             font-size: 44px;
@@ -92,7 +107,10 @@
             font-family: 'Montserrat', sans-serif;
         }
 
-        p, li, td, th {
+        p,
+        li,
+        td,
+        th {
             font-size: 32px;
             line-height: 1.35;
             color: #e2e8f0;
@@ -129,8 +147,17 @@
             padding: 35px;
         }
 
-        .tile-red { border-top: 10px solid #FF3131; }
-        .tile-blue { border-top: 10px solid #1F51FF; }
+        .tile-red {
+            border-top: 10px solid #FF3131;
+        }
+
+        .tile-green {
+            border-top: 10px solid #39FF14;
+        }
+
+        .tile-blue {
+            border-top: 10px solid #1F51FF;
+        }
 
         .tile p {
             margin: 15px 0;
@@ -161,7 +188,7 @@
             padding: 0;
         }
 
-        .slide-container.bleed-image-layout > .content-container {
+        .slide-container.bleed-image-layout>.content-container {
             padding: 80px 60px;
             display: flex;
             flex-direction: column;
@@ -190,60 +217,76 @@
             gap: 30px;
         }
 
-        .bar-label { 
-            width: 320px; 
-            text-align: right; 
-            font-weight: 700; 
+        .bar-label {
+            width: 320px;
+            text-align: right;
+            font-weight: 700;
             font-size: 34px;
+            color: #fff;
         }
-        
-        .bar-bg { 
-            background: #151515; 
-            flex-grow: 1; 
-            height: 60px; 
-            border-radius: 30px; 
+
+        .bar-bg {
+            background: #151515;
+            flex-grow: 1;
+            height: 60px;
+            border-radius: 30px;
             overflow: hidden;
             border: 1px solid #333;
         }
-        
-        .bar-fill { 
-            height: 100%; 
-            display: flex; 
-            align-items: center; 
-            justify-content: flex-end; 
-            padding-right: 25px; 
-            color: #000; 
-            font-weight: 800; 
-            font-size: 28px; 
+
+        .bar-fill {
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 15px;
+            padding-left: 15px;
+            color: #fff;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.8);
+            font-weight: 800;
+            font-size: 28px;
+            white-space: nowrap;
+            min-width: max-content;
         }
 
         /* Tabelas Comparativas */
-        table { 
-            width: 100%; 
-            border-collapse: collapse; 
-            margin-top: 10px; 
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
         }
-        
-        th { 
-            background-color: #111; 
-            color: #fff; 
-            padding: 24px; 
-            text-align: left; 
+
+        th {
+            background-color: #111;
+            color: #fff;
+            padding: 24px;
+            text-align: left;
             border-bottom: 4px solid #444;
             font-family: 'Montserrat', sans-serif;
             font-size: 34px;
         }
-        
-        td { 
-            padding: 24px; 
-            border-bottom: 2px solid #222; 
+
+        td {
+            padding: 24px;
+            border-bottom: 2px solid #222;
             font-size: 30px;
         }
 
         /* Cores Neon de Alto Contraste */
-        .text-red { color: #FF3131; text-shadow: 0 0 20px rgba(255,49,49,0.3); }
-        .text-green { color: #39FF14; text-shadow: 0 0 20px rgba(57,255,20,0.3); }
-        .text-blue { color: #1F51FF; text-shadow: 0 0 20px rgba(31,81,255,0.3); }
+        .text-red {
+            color: #FF3131;
+            text-shadow: 0 0 20px rgba(255, 49, 49, 0.3);
+        }
+
+        .text-green {
+            color: #39FF14;
+            text-shadow: 0 0 20px rgba(57, 255, 20, 0.3);
+        }
+
+        .text-blue {
+            color: #1F51FF;
+            text-shadow: 0 0 20px rgba(31, 81, 255, 0.3);
+        }
 
         .number {
             font-family: 'Montserrat', sans-serif;
@@ -260,201 +303,299 @@
         li {
             margin-bottom: 25px;
         }
+
+        @keyframes glowingRGB {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        #slide10 {
+            background: linear-gradient(-45deg, #FF3131, #000, #39FF14, #000, #1F51FF, #000);
+            background-size: 400% 400%;
+            animation: glowingRGB 12s ease infinite;
+        }
     </style>
 </head>
+
 <body>
 
-<!-- SLIDE 1: CAPA -->
-<div class="slide-container" id="slide1">
-    <div style="text-align: center;">
-        <h1><span class="text-red">R</span><span class="text-green">G</span><span class="text-blue">B</span></h1>
-        <h2 style="color: #fff; font-size: 65px; margin-top: 15px; font-family: 'Montserrat', sans-serif; font-weight: 700;">O DESAFIO DO AZUL</h2>
-        <p class="subtitle">A Revolução Tecnológica e Comportamental da Luz</p>
-    </div>
-</div>
+    <div id="slide-counter" style="position: absolute; bottom: 20px; right: 30px; color: #666; font-family: 'Inter', sans-serif; font-size: 20px; z-index: 1000; font-weight: 600;"></div>
 
-<!-- SLIDE 2: APRESENTAÇÃO DA EQUIPE -->
-<div class="slide-container" id="slide2">
-    <div style="text-align: center;">
-        <h2 style="font-size: 70px; font-family: 'Montserrat', sans-serif; margin-bottom: 20px; color: #fff;">A EQUIPE DE PESQUISA</h2>
-        <p style="font-size: 42px; color: #a0aec0; max-width: 900px; margin: 0 auto;">Divisão paritária para análise de cenários: Corporativo e Iniciativa Privada</p>
-        <div style="margin-top: 50px; height: 6px; width: 200px; background: linear-gradient(90deg, #FF3131, #39FF14, #1F51FF); margin-inline: auto;"></div>
-    </div>
-</div>
-
-<!-- SLIDE 3: INTEGRANTES (DIVIDIDO EM 8 PESSOAS) -->
-<div class="slide-container" id="slide3">
-    <h2 class="slide-title">Integrantes do Grupo</h2>
-    <div class="content-area">
-        <div class="two-column">
-            <div class="tile tile-red">
-                <p><i class="fa-solid fa-user-gear text-red" style="margin-right: 15px;"></i> Aluizio Monteiro Schuster Jr.</p>
-                <p><i class="fa-solid fa-user-gear text-red" style="margin-right: 15px;"></i> Eduarda Horning Bzunek</p>
-                <p><i class="fa-solid fa-user-gear text-red" style="margin-right: 15px;"></i> Júlio César Ferreira</p>
-                <p><i class="fa-solid fa-user-gear text-red" style="margin-right: 15px;"></i> José Otavio C. Raimundo</p>
-            </div>
-            <div class="tile tile-blue">
-                <p><i class="fa-solid fa-user-gear text-blue" style="margin-right: 15px;"></i> João Gualberto Boissa Netto</p>
-                <p><i class="fa-solid fa-user-gear text-blue" style="margin-right: 15px;"></i> João Matheus Pianaro</p>
-                <p><i class="fa-solid fa-user-gear text-blue" style="margin-right: 15px;"></i> João Vitor da Mota Mattos</p>
-                <p><i class="fa-solid fa-user-gear text-blue" style="margin-right: 15px;"></i> Yasmin Dos Santos Pereira</p>
-            </div>
+    <!-- SLIDE 1: CAPA -->
+    <div class="slide-container" id="slide1">
+        <div style="text-align: center;">
+            <h1><span class="text-red">R</span><span class="text-green">G</span><span class="text-blue">B</span></h1>
+            <h2
+                style="color: #fff; font-size: 65px; margin-top: 15px; font-family: 'Montserrat', sans-serif; font-weight: 700;">
+                O DESAFIO DO AZUL</h2>
+            <p class="subtitle">A Revolução Tecnológica e Comportamental da Luz</p>
         </div>
     </div>
-</div>
 
-<!-- SLIDE 4: HISTÓRICO -->
-<div class="slide-container" id="slide4">
-    <h2 class="slide-title">Evolução: Da Chama ao Fóton</h2>
-    <div class="content-area">
-        <div class="two-column">
-            <div>
-                <ul style="list-style: none; padding: 0;">
-                    <li><span class="text-red">1800 - 1879:</span> A corrida pelo controle da eletricidade e o filamento perfeito.</li>
-                    <li><span class="text-green">1962:</span> Invenção do primeiro LED visível comercial (Vermelho).</li>
-                    <li><span class="text-blue">Anos 1990:</span> O grande gargalo da engenharia de materiais modernos.</li>
-                </ul>
-            </div>
-            <div class="image-wrapper">
-                <img src="http://googleusercontent.com/image_collection/image_retrieval/15809861950559860822" alt="Evolução da Luz">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 5: A FÍSICA DO VERMELHO E VERDE -->
-<div class="slide-container" id="slide5">
-    <h2 class="slide-title">A Física do Vermelho e Verde</h2>
-    <div class="content-area">
-        <div class="two-column">
-            <div>
-                <p>Diodos emissores de luz dependem do espaçamento de energia eletrônica (<span class="text-green">Bandgap</span>).</p>
-                <p style="margin-top: 25px;">Semicondutores baseados em fósforo e arsênico resolveram as ondas longas facilmente.</p>
-                <p class="text-red" style="margin-top: 25px; font-weight: 600;">Sem o Azul, a síntese do branco e os displays digitais eram impossíveis.</p>
-            </div>
-            <div class="image-wrapper">
-                <img src="http://googleusercontent.com/image_collection/image_retrieval/12432443804988209199" alt="Semicondutores">
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 6: O ABISMO DE 30 ANOS -->
-<div class="slide-container" id="slide6">
-    <h2 class="slide-title">O Abismo de 30 Anos</h2>
-    <div class="content-area">
-        <div class="two-column" style="align-items: center; grid-template-columns: 0.8fr 1.2fr;">
-            <div class="number text-blue" style="text-align: center;">30</div>
-            <div>
-                <h3>Anos de Falhas Coletivas</h3>
-                <p>Três décadas separaram o LED verde do azul.</p>
-                <p style="margin-top: 25px;">Grandes corporações mundiais abandonaram as pesquisas e rotularam o Nitreto de Gálio (GaN) como inviável.</p>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- SLIDE 7: SHUJI NAKAMURA -->
-<div class="slide-container bleed-image-layout" id="slide7">
-    <div class="content-container">
-        <h2 class="slide-title" style="margin-bottom: 15px;">Shuji Nakamura</h2>
+    <!-- SLIDE 3: INTEGRANTES (DIVIDIDO EM 8 PESSOAS POR RGB) -->
+    <div class="slide-container" id="slide3">
+        <h2 class="slide-title">Integrantes do Grupo</h2>
         <div class="content-area">
-            <h3 class="text-blue" style="font-size: 38px;">Intraempreendedorismo Radical</h3>
-            <p style="font-size: 28px;">Enquanto a comunidade científica global apostava no Seleneto de Zinco (ZnSe), Nakamura insistiu no desafiador Nitreto de Gálio (GaN).</p>
-            <p style="margin-top: 20px; font-size: 28px;" class="text-green">Desobedeceu ordens diretas da liderança para focar na execução prática.</p>
-        </div>
-    </div>
-    <div class="image-container">
-        <img class="bleed-image-side" src="http://googleusercontent.com/image_collection/image_retrieval/9566775915183009746" alt="Shuji Nakamura">
-    </div>
-</div>
-
-<!-- SLIDE 8: GRÁFICO DE EFICIÊNCIA LUMINOSA -->
-<div class="slide-container" id="slide8">
-    <h2 class="slide-title">Eficiência Luminosa (Lm/W)</h2>
-    <div class="content-area">
-        <div class="bar-chart">
-            <div class="bar-row">
-                <div class="bar-label">Incandescente</div>
-                <div class="bar-bg"><div class="bar-fill" style="width: 15%; background: #4a5568; color: #fff;">15 Lm/W</div></div>
-            </div>
-            <div class="bar-row">
-                <div class="bar-label">Fluorescente</div>
-                <div class="bar-bg"><div class="bar-fill" style="width: 45%; background: #718096; color: #fff;">70 Lm/W</div></div>
-            </div>
-            <div class="bar-row">
-                <div class="bar-label">LED Branco (RGB)</div>
-                <div class="bar-bg"><div class="bar-fill" style="width: 95%; background: linear-gradient(90deg, #FF3131, #39FF14, #1F51FF); color: #000;">300+ Lm/W</div></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; width: 100%;">
+                <div class="tile tile-red">
+                    <p><i class="fa-solid fa-user-gear text-red" style="margin-right: 15px;"></i> Aluizio Monteiro Schuster Jr.</p>
+                    <p><i class="fa-solid fa-user-gear text-red" style="margin-right: 15px;"></i> Eduarda Horning Bzunek</p>
+                    <p><i class="fa-solid fa-user-gear text-red" style="margin-right: 15px;"></i> Júlio César Ferreira</p>
+                </div>
+                <div class="tile tile-green">
+                    <p><i class="fa-solid fa-user-gear text-green" style="margin-right: 15px;"></i> José Otavio C. Raimundo</p>
+                    <p><i class="fa-solid fa-user-gear text-green" style="margin-right: 15px;"></i> João Gualberto Boissa Netto</p>
+                    <p><i class="fa-solid fa-user-gear text-green" style="margin-right: 15px;"></i> João Matheus Pianaro</p>
+                </div>
+                <div class="tile tile-blue">
+                    <p><i class="fa-solid fa-user-gear text-blue" style="margin-right: 15px;"></i> João Vitor da Mota Mattos</p>
+                    <p><i class="fa-solid fa-user-gear text-blue" style="margin-right: 15px;"></i> Yasmin Dos Santos Pereira</p>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
-<!-- SLIDE 9: ACADEMIA VS INICIATIVA PRIVADA -->
-<div class="slide-container" id="slide9">
-    <h2 class="slide-title">Ambiente Científico vs Corporativo</h2>
-    <div class="content-area">
-        <table>
-            <thead>
-                <tr>
-                    <th>Abordagem</th>
-                    <th>Acadêmica (Nagoya)</th>
-                    <th>Privada (Nichia Corp.)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td style="font-weight: 600;">Metodologia</td>
-                    <td>Teórica, Incremental, Rígida</td>
-                    <td>Prática, Empírica, Veloz</td>
-                </tr>
-                <tr>
-                    <td style="font-weight: 600;">Gestão de Risco</td>
-                    <td>Controlada / Publicações</td>
-                    <td>Extrema / Foco em Patentes</td>
-                </tr>
-                <tr>
-                    <td style="font-weight: 600;">Resultado</td>
-                    <td>Rigor e Base Científica</td>
-                    <td>Ruptura de Mercado Global</td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
-
-<!-- SLIDE 10: O IMPACTO GLOBAL -->
-<div class="slide-container" id="slide10" style="background-image: linear-gradient(rgba(0,0,0,0.85), rgba(0,0,0,0.85)), url('http://googleusercontent.com/image_collection/image_retrieval/3493782443480255438'); background-size: cover; background-position: center;">
-    <div style="text-align: center;">
-        <h2 style="font-size: 75px; color: #fff; font-family: 'Montserrat', sans-serif;">O IMPACTO PLANETÁRIO</h2>
-        <p style="font-size: 38px; max-width: 1000px; margin: 35px auto; color: #e2e8f0; line-height: 1.4;">A consolidação do RGB permitiu telas retroiluminadas de alta definição, redução drástica do consumo global de energia e viabilizou a infraestrutura visual moderna.</p>
-    </div>
-</div>
-
-<!-- SLIDE 11: LIÇÕES COMPORTAMENTAIS -->
-<div class="slide-container" id="slide11">
-    <h2 class="slide-title">Diretrizes Comportamentais</h2>
-    <div class="content-area">
-        <ul style="list-style: none; padding: 0;">
-            <li><i class="fa-solid fa-circle-check text-red" style="margin-right: 20px;"></i> <strong>Resiliência Pragmática:</strong> Sustentar teses técnicas mesmo sob forte descrédito corporativo.</li>
-            <li><i class="fa-solid fa-circle-check text-green" style="margin-right: 20px;"></i> <strong>Iniciativa de Dono:</strong> Adaptar e construir ferramentas próprias quando o ecossistema falha.</li>
-            <li><i class="fa-solid fa-circle-check text-blue" style="margin-right: 20px;"></i> <strong>Visão de Valor:</strong> Alinhar a competência técnica ao impacto prático na sociedade.</li>
-        </ul>
-    </div>
-</div>
-
-<!-- SLIDE 12: ENCERRAMENTO -->
-<div class="slide-container" id="slide12">
-    <div style="text-align: center;">
-        <h1 class="text-blue">PERGUNTAS?</h1>
-        <p class="subtitle">Obrigado pela atenção!</p>
-        <div style="margin-top: 60px; display: flex; justify-content: center; gap: 50px; font-size: 70px;">
-            <i class="fa-solid fa-lightbulb text-red"></i>
-            <i class="fa-solid fa-microchip text-green"></i>
-            <i class="fa-solid fa-display text-blue"></i>
+    <!-- SLIDE 4: HISTÓRICO -->
+    <div class="slide-container" id="slide4">
+        <h2 class="slide-title">Evolução: Da Chama ao Fóton</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div>
+                    <ul style="list-style: none; padding: 0;">
+                        <li><span class="text-red">1800 - 1879:</span> A corrida pelo controle da eletricidade e o
+                            filamento perfeito.</li>
+                        <li><span class="text-green">1962:</span> Invenção do primeiro LED visível comercial (Vermelho).
+                        </li>
+                        <li><span class="text-blue">Anos 1990:</span> O grande gargalo da engenharia de materiais
+                            modernos.</li>
+                    </ul>
+                </div>
+                <div class="image-wrapper">
+                    <img src="./bulb.png"
+                        alt="Evolução da Luz">
+                </div>
+            </div>
         </div>
     </div>
-</div>
 
+    <!-- SLIDE 5: A FÍSICA DO VERMELHO E VERDE -->
+    <div class="slide-container" id="slide5">
+        <h2 class="slide-title">A Física do Vermelho e Verde</h2>
+        <div class="content-area">
+            <div class="two-column">
+                <div>
+                    <p>Diodos emissores de luz dependem do espaçamento de energia eletrônica (<span
+                            class="text-green">Bandgap</span>).</p>
+                    <p style="margin-top: 25px;">Semicondutores baseados em fósforo e arsênico resolveram as ondas
+                        longas facilmente.</p>
+                    <p class="text-red" style="margin-top: 25px; font-weight: 600;">Sem o Azul, a síntese do branco e os
+                        displays digitais eram impossíveis.</p>
+                </div>
+                <div class="image-wrapper">
+                    <img src="./GaN_Wurtzite_polyhedra.png"
+                        alt="Semicondutores">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 6: O ABISMO DE 30 ANOS -->
+    <div class="slide-container" id="slide6">
+        <h2 class="slide-title">O Abismo de 30 Anos</h2>
+        <div class="content-area">
+            <div class="two-column" style="align-items: center; grid-template-columns: 0.8fr 1.2fr;">
+                <div class="number text-blue" style="text-align: center;">30</div>
+                <div>
+                    <h3>Anos de Falhas Coletivas</h3>
+                    <p>Três décadas separaram o LED verde do azul.</p>
+                    <p style="margin-top: 25px;">Grandes corporações mundiais abandonaram as pesquisas e rotularam o
+                        Nitreto de Gálio (GaN) como inviável.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 7: SHUJI NAKAMURA -->
+    <div class="slide-container bleed-image-layout" id="slide7">
+        <div class="content-container">
+            <h2 class="slide-title" style="margin-bottom: 15px;">Shuji Nakamura</h2>
+            <div class="content-area">
+                <h3 class="text-blue" style="font-size: 38px;">Intraempreendedorismo Radical</h3>
+                <p style="font-size: 28px;">Enquanto a comunidade científica global apostava no Seleneto de Zinco
+                    (ZnSe), Nakamura insistiu no desafiador Nitreto de Gálio (GaN).</p>
+                <p style="margin-top: 20px; font-size: 28px;" class="text-green">Desobedeceu ordens diretas da liderança
+                    para focar na execução prática.</p>
+            </div>
+        </div>
+        <div class="image-container">
+            <img class="bleed-image-side"
+                src="./nakamura-15186-portrait-medium.png"
+                alt="Shuji Nakamura">
+        </div>
+    </div>
+
+    <!-- SLIDE 8: GRÁFICO DE EFICIÊNCIA LUMINOSA -->
+    <div class="slide-container" id="slide8">
+        <h2 class="slide-title" style="margin-bottom: 15px;">Eficiência Luminosa (Lm/W)</h2>
+        <p style="font-size: 28px; color: #a0aec0; margin-bottom: 40px; width: 100%; padding-left: 25px;">
+            * <strong>Lm/W (Lúmens por Watt):</strong> Quantidade de luz visível emitida para cada Watt de energia elétrica consumida.
+        </p>
+        <div class="content-area">
+            <div class="bar-chart">
+                <div class="bar-row">
+                    <div class="bar-label">Incandescente</div>
+                    <div class="bar-bg">
+                        <div class="bar-fill" style="width: 15%; background: #4a5568; color: #fff;">15 Lm/W</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">Fluorescente</div>
+                    <div class="bar-bg">
+                        <div class="bar-fill" style="width: 45%; background: #718096; color: #fff;">70 Lm/W</div>
+                    </div>
+                </div>
+                <div class="bar-row">
+                    <div class="bar-label">LED Branco (RGB)</div>
+                    <div class="bar-bg">
+                        <div class="bar-fill"
+                            style="width: 95%; background: linear-gradient(90deg, #FF3131, #39FF14, #1F51FF); color: #fff;">
+                            300+ Lm/W</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SLIDE 8.5: A CORRIDA PARALELA (INTRODUÇÃO) -->
+    <div class="slide-container" id="slide8-half">
+        <h2 class="slide-title">A Corrida: Dois Mundos Paralelos</h2>
+        <div class="content-area">
+            <div class="two-column" style="gap: 40px; align-items: start;">
+                <div class="tile tile-blue" style="background-color: #0f0f0f; padding: 40px;">
+                    <h3 style="color: #39FF14; font-size: 38px;"><i class="fa-solid fa-graduation-cap" style="margin-right: 15px;"></i>A Academia</h3>
+                    <p style="font-size: 32px; font-weight: 700; color: #fff;">Universidade de Nagoya</p>
+                    <p style="font-size: 28px; color: #a0aec0; margin-top: 15px;">Os pesquisadores <strong>Isamu Akasaki</strong> e <strong>Hiroshi Amano</strong> buscaram criar a base teórica e entender a física da emissão de luz, trabalhando com rigor, mas pouca verba.</p>
+                </div>
+                <div class="tile tile-blue" style="background-color: #0f0f0f; padding: 40px;">
+                    <h3 style="color: #FF3131; font-size: 38px;"><i class="fa-solid fa-building" style="margin-right: 15px;"></i>O Corporativo</h3>
+                    <p style="font-size: 32px; font-weight: 700; color: #fff;">Nichia Corporation</p>
+                    <p style="font-size: 28px; color: #a0aec0; margin-top: 15px;">O engenheiro <strong>Shuji Nakamura</strong> tinha a missão de transformar o material em um produto que pudesse ser vendido rapidamente, assumindo enormes riscos financeiros.</p>
+                </div>
+            </div>
+            <p style="text-align: center; font-size: 32px; margin-top: 45px; color: #e2e8f0; border-top: 2px solid #333; padding-top: 25px;">
+                Eles trilharam caminhos completamente opostos, mas os três <strong class="text-blue">dividiram o Prêmio Nobel de Física!</strong>
+            </p>
+        </div>
+    </div>
+
+    <!-- SLIDE 9: ACADEMIA VS INICIATIVA PRIVADA (TABELA) -->
+    <div class="slide-container" id="slide9">
+        <h2 class="slide-title">Ambiente Científico vs Corporativo</h2>
+        <div class="content-area">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Abordagem</th>
+                        <th>Acadêmica (Nagoya)</th>
+                        <th>Privada (Nichia Corp.)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td style="font-weight: 600;">Metodologia</td>
+                        <td>Teórica, Incremental, Rígida</td>
+                        <td>Prática, Empírica, Veloz</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">Gestão de Risco</td>
+                        <td>Controlada / Publicações</td>
+                        <td>Extrema / Foco em Patentes</td>
+                    </tr>
+                    <tr>
+                        <td style="font-weight: 600;">Resultado</td>
+                        <td>Rigor e Base Científica</td>
+                        <td>Ruptura de Mercado Global</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SLIDE 10: O IMPACTO GLOBAL -->
+    <div class="slide-container" id="slide10">
+        <div style="text-align: center; background-color: #000; padding: 60px; border-radius: 20px; box-shadow: 0 0 40px rgba(0,0,0,0.8); border: 2px solid #222;">
+            <h2 style="font-size: 75px; color: #fff; font-family: 'Montserrat', sans-serif;">O IMPACTO PLANETÁRIO</h2>
+            <p style="font-size: 38px; max-width: 1000px; margin: 35px auto; color: #e2e8f0; line-height: 1.4;">A
+                consolidação do RGB permitiu telas retroiluminadas de alta definição, redução drástica do consumo global
+                de energia e viabilizou a infraestrutura visual moderna.</p>
+        </div>
+    </div>
+
+    <!-- SLIDE 11: LIÇÕES COMPORTAMENTAIS -->
+    <div class="slide-container" id="slide11">
+        <h2 class="slide-title">Diretrizes Comportamentais</h2>
+        <div class="content-area">
+            <ul style="list-style: none; padding: 0;">
+                <li><i class="fa-solid fa-circle-check text-red" style="margin-right: 20px;"></i> <strong>Resiliência
+                        Pragmática:</strong> Sustentar teses técnicas mesmo sob forte descrédito corporativo.</li>
+                <li><i class="fa-solid fa-circle-check text-green" style="margin-right: 20px;"></i> <strong>Iniciativa
+                        de Dono:</strong> Adaptar e construir ferramentas próprias quando o ecossistema falha.</li>
+                <li><i class="fa-solid fa-circle-check text-blue" style="margin-right: 20px;"></i> <strong>Visão de
+                        Valor:</strong> Alinhar a competência técnica ao impacto prático na sociedade.</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- SLIDE 12: ENCERRAMENTO -->
+    <div class="slide-container" id="slide12">
+        <div style="text-align: center;">
+            <h1 class="text-blue">PERGUNTAS?</h1>
+            <p class="subtitle">Obrigado pela atenção!</p>
+            <div style="margin-top: 60px; display: flex; justify-content: center; gap: 50px; font-size: 70px;">
+                <i class="fa-solid fa-lightbulb text-red"></i>
+                <i class="fa-solid fa-microchip text-green"></i>
+                <i class="fa-solid fa-display text-blue"></i>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide-container');
+        
+        function showSlide(index) {
+            slides.forEach((slide, i) => {
+                if (i === index) {
+                    if (slide.classList.contains('bleed-image-layout')) {
+                        slide.style.display = 'grid';
+                    } else {
+                        slide.style.display = 'flex';
+                    }
+                } else {
+                    slide.style.display = 'none';
+                }
+            });
+            document.getElementById('slide-counter').innerText = `${index + 1} / ${slides.length}`;
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === ' ') {
+                if (currentSlide < slides.length - 1) {
+                    currentSlide++;
+                    showSlide(currentSlide);
+                }
+            } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+                if (currentSlide > 0) {
+                    currentSlide--;
+                    showSlide(currentSlide);
+                }
+            }
+        });
+
+        // Inicia na primeira tela
+        showSlide(currentSlide);
+    </script>
 </body>
+
 </html>
